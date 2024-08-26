@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 from functools import reduce
 
-from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsRegressor
 
 import gc
@@ -12,7 +11,7 @@ import gc
 def main():
 
     data = {}
-    for year in range(2010, 2010+1):#2020+1):
+    for year in range(2010, 2011+1):#2020+1):
 
         # read data from this year
         year_data = ReadYear(year)
@@ -47,18 +46,26 @@ def main():
 
 
 
-    # simplify below for now
-    june_data = data["2010"]["6"] # June
-    # Plot(june_data.latitude, june_data.longitude, june_data.rainfall, "rainfall")
 
-    # append March, April, May as separate columns
-    months = [
-        ("_march", data["2010"]["3"]),
-        ("_april", data["2010"]["4"]),
-        ("_may", data["2010"]["5"]),
-    ]
-    june_data = reduce(lambda left, right: pd.merge(left, right[1][["latitude","longitude","rainfall"]], how="outer", on=["latitude", "longitude"], suffixes=(None, right[0])), months, june_data)
+    # select years for training and testing
+    training_data = data["2010"]
+    testing_data = data["2011"]
 
+    # training stage
+    training_vars = ["latitude", "longitude"]
+    
+    # 6 is for June
+    train_target = training_data.pop("rainfall_6")
+    test_target = testing_data.pop("rainfall_6")
+    train_target = np.array(train_target).reshape(-1,1)
+    test_target = np.array(test_target).reshape(-1,1)
+
+    knn = KNeighborsRegressor(n_neighbors=5)
+    knn.fit(training_data[training_vars], train_target)
+    print(knn.score(testing_data[training_vars], test_target))
+    
+    test_target_predict = knn.predict(testing_data[training_vars])
+    Plot(testing_data.latitude, testing_data.longitude,  test_target.reshape(-1)-test_target_predict.reshape(-1), difference=True, label="Actual - predicted rainfall")
 
 if __name__ == "__main__":
     main()
