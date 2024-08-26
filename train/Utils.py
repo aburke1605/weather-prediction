@@ -49,7 +49,7 @@ def ReadYear(year:int) -> pd.DataFrame:
     return data
 
 
-def Plot(latitude, longitude, variable, label=None, difference=False):
+def Plot(latitude, longitude, variable, label=None, difference=False, save:str|None=None):
     """
     x = r λ cos(φ0)
     y = r φ
@@ -67,7 +67,13 @@ def Plot(latitude, longitude, variable, label=None, difference=False):
     # not quite the same for x, theres some curvature
     nbins_x = int((max(x)-min(x))/abs(x[1]-x[0])*2.02)
 
+    if difference:
+        limit = max(abs(min(variable)), abs(max(variable)))
+
     fig, ax = plt.subplots(figsize=(6,10))
-    _, _, _, im = ax.hist2d(x, y, weights=variable, bins=(nbins_x, nbins_y), cmap="coolwarm" if difference else "Blues")
+    _, _, _, im = ax.hist2d(x, y, weights=variable, bins=(nbins_x, nbins_y), cmap="bwr" if difference else "Blues", vmin=-limit if difference else None, vmax=limit if difference else None)
     fig.colorbar(im, label=label)
-    plt.show()
+    if save is None:
+        plt.show()
+    else:
+        plt.savefig(save)

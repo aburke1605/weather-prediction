@@ -53,7 +53,11 @@ def main():
 
     # training stage
     training_vars = ["latitude", "longitude"]
-    
+    for i in range(5):
+        training_vars.append(f"rainfall_{i+1}")
+        training_vars.append(f"sun_duration_{i+1}")
+        training_vars.append(f"wind_speed_{i+1}")
+
     # 6 is for June
     train_target = training_data.pop("rainfall_6")
     test_target = testing_data.pop("rainfall_6")
@@ -62,10 +66,15 @@ def main():
 
     knn = KNeighborsRegressor(n_neighbors=5)
     knn.fit(training_data[training_vars], train_target)
-    print(knn.score(testing_data[training_vars], test_target))
-    
+    print(f"score: {knn.score(testing_data[training_vars], test_target):.2f}")
+
+    # overtraining check, should be white noise
+    train_target_predict = knn.predict(training_data[training_vars])
+    Plot(training_data.latitude, training_data.longitude,  train_target.reshape(-1)-train_target_predict.reshape(-1), difference=True, label="Actual - predicted rainfall", save="overtraining.pdf")
+
+    # apply to following year
     test_target_predict = knn.predict(testing_data[training_vars])
-    Plot(testing_data.latitude, testing_data.longitude,  test_target.reshape(-1)-test_target_predict.reshape(-1), difference=True, label="Actual - predicted rainfall")
+    Plot(testing_data.latitude, testing_data.longitude,  test_target.reshape(-1)-test_target_predict.reshape(-1), difference=True, label="Actual - predicted rainfall", save="test.pdf")
 
 if __name__ == "__main__":
     main()
