@@ -63,8 +63,9 @@ def Plot(latitude, longitude, variable, label=None, difference=False):
     y = r * latitude
 
     # nbins = width / bin_width
-    nbins_x = int((max(x)-min(x))/abs(x[1]-x[0]))
     nbins_y = int((max(y)-min(y))/abs(y[1]-y[0]))
+    # not quite the same for x, theres some curvature
+    nbins_x = int((max(x)-min(x))/abs(x[1]-x[0])*2.02)
 
     fig, ax = plt.subplots(figsize=(6,10))
     _, _, _, im = ax.hist2d(x, y, weights=variable, bins=(nbins_x, nbins_y), cmap="coolwarm" if difference else "Blues")
