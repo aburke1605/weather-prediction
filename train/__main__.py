@@ -2,6 +2,7 @@ from .Utils import ReadYear, Plot
 
 import numpy as np
 import pandas as pd
+from functools import reduce
 
 
 def main():
@@ -23,7 +24,15 @@ def main():
 
     # simplify below for now
     june_data = data["2010"]["6"] # June
-    Plot(june_data.latitude, june_data.longitude, june_data.rainfall, "rainfall")
+    # Plot(june_data.latitude, june_data.longitude, june_data.rainfall, "rainfall")
+
+    # append March, April, May as separate columns
+    months = [
+        ("_march", data["2010"]["3"]),
+        ("_april", data["2010"]["4"]),
+        ("_may", data["2010"]["5"]),
+    ]
+    june_data = reduce(lambda left, right: pd.merge(left, right[1][["latitude","longitude","rainfall"]], how="outer", on=["latitude", "longitude"], suffixes=(None, right[0])), months, june_data)
 
 
 if __name__ == "__main__":

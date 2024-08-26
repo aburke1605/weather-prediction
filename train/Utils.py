@@ -42,7 +42,7 @@ def ReadYear(year:int) -> pd.DataFrame:
     }.items():
         data_frames.append(Open(f"data/{new_variable}/{variable}_hadukgrid_uk_12km_mon_{year}01-{year}12.nc", variable, rename_variable=new_variable))
 
-    data = reduce(lambda  left,right: pd.merge(left,right,on=["month_number", "latitude", "longitude"], how="outer"), data_frames)
+    data = reduce(lambda left, right: pd.merge(left, right, on=["month_number", "latitude", "longitude"], how="outer"), data_frames)
     data.dropna(inplace=True)
     data.reset_index(drop=True, inplace=True)
 
