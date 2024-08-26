@@ -5,16 +5,17 @@ from functools import reduce
 
 
 def main():
-    rainfall = Open("data/rainfall/rainfall_hadukgrid_uk_12km_mon_201001-201012.nc", "rainfall")
-    sun_duration = Open("data/sun_duration/sun_hadukgrid_uk_12km_mon_201001-201012.nc", "sun", rename_variable="sun_duration")
-    wind_speed = Open("data/wind_speed/sfcWind_hadukgrid_uk_12km_mon_201001-201012.nc", "sfcWind", rename_variable="wind_speed")
 
+    data_frames = []
+    for variable, new_variable in {
+        "rainfall": "rainfall",
+        "sun": "sun_duration",
+        "sfcWind": "wind_speed",
+    }.items():
+        data_frames.append(Open(f"data/{new_variable}/{variable}_hadukgrid_uk_12km_mon_201001-201012.nc", variable, rename_variable=new_variable))
 
-    data_frames = [rainfall, sun_duration, wind_speed]
     df_merged = reduce(lambda  left,right: pd.merge(left,right,on=["month_number", "latitude", "longitude"], how="outer"), data_frames)
     df_merged.dropna(inplace=True)
-    print(df_merged.shape)
-    print(df_merged.head())
 
 
 if __name__ == "__main__":
