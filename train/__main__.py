@@ -6,6 +6,7 @@ from functools import reduce
 
 def main():
 
+    # combine all files into one dataframe
     data_frames = []
     for variable, new_variable in {
         "hurs":     "humidity",
@@ -21,8 +22,6 @@ def main():
 
     data = reduce(lambda  left,right: pd.merge(left,right,on=["month_number", "latitude", "longitude"], how="outer"), data_frames)
     data.dropna(inplace=True)
-    print(data.shape)
-    print(data.head())
 
 if __name__ == "__main__":
     main()

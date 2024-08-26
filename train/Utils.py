@@ -6,10 +6,13 @@ import matplotlib.pyplot as plt
 def Open(filename:str, variable:str, rename_variable:str|None=None) -> pd.DataFrame:
     ds = xr.open_dataset(filename)
     df = ds.to_dataframe()
-    df.reset_index(drop=True, inplace=True)
 
     # keep only variable of interest and identifiers
     df = df[[variable, "latitude", "longitude", "month_number"]]
+    df.reset_index(drop=True, inplace=True)
+
+    # remove duplicates leftover from the "bnds" columns
+    df.drop_duplicates(inplace=True)
 
     # remove outliers
     df.dropna(inplace=True)
