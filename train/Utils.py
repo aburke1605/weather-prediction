@@ -3,7 +3,7 @@ import xarray as xr
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def Open(filename, variable) -> pd.DataFrame:
+def Open(filename:str, variable:str, rename_variable:str|None=None) -> pd.DataFrame:
     ds = xr.open_dataset(filename)
     df = ds.to_dataframe()
     df.reset_index(drop=True, inplace=True)
@@ -18,6 +18,9 @@ def Open(filename, variable) -> pd.DataFrame:
     mini = min(df[variable])
     maxi = max(df[variable])
     df[variable] = (df[variable] + mini) / (mini + maxi)
+
+    if rename_variable is not None:
+        df.rename(columns={variable: rename_variable}, inplace=True)
 
     return df
 

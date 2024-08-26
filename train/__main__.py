@@ -6,8 +6,8 @@ from functools import reduce
 
 def main():
     rainfall = Open("data/rainfall/rainfall_hadukgrid_uk_12km_mon_201001-201012.nc", "rainfall")
-    sun_duration = Open("data/sun_duration/sun_hadukgrid_uk_12km_mon_201001-201012.nc", "sun")
-    wind_speed = Open("data/wind_speed/sfcWind_hadukgrid_uk_12km_mon_201001-201012.nc", "sfcWind")
+    sun_duration = Open("data/sun_duration/sun_hadukgrid_uk_12km_mon_201001-201012.nc", "sun", rename_variable="sun_duration")
+    wind_speed = Open("data/wind_speed/sfcWind_hadukgrid_uk_12km_mon_201001-201012.nc", "sfcWind", rename_variable="wind_speed")
 
 
     data_frames = [rainfall, sun_duration, wind_speed]
