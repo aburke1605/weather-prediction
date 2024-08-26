@@ -1,27 +1,25 @@
-from .Utils import Open
+from .Utils import ReadYear, Plot
 
+import numpy as np
 import pandas as pd
-from functools import reduce
 
 
 def main():
 
-    # combine all files into one dataframe
-    data_frames = []
-    for variable, new_variable in {
-        "hurs":     "humidity",
-        "tasmax":   "max_temperature",
-        "tas":      "mean_temperature",
-        "tasmin":   "min_temperature",
-        "psl":      "pressure",
-        "rainfall": "rainfall",
-        "sun":      "sun_duration",
-        "sfcWind":  "wind_speed",
-    }.items():
-        data_frames.append(Open(f"data/{new_variable}/{variable}_hadukgrid_uk_12km_mon_201001-201012.nc", variable, rename_variable=new_variable))
+    data = {}
+    for year in range(2010, 2010+1):#2020+1):
+        # create dictionary space for this year
+        data[str(year)] = {}
 
-    data = reduce(lambda  left,right: pd.merge(left,right,on=["month_number", "latitude", "longitude"], how="outer"), data_frames)
-    data.dropna(inplace=True)
+        # read data from this year
+        all_data = ReadYear(year)
+
+        # now split by month
+        for month in range(1, 12+1):
+            data[str(year)][str(month)] = all_data.query(f"month_number=={month}").drop(["month_number"], axis=1)
+            # print(np.sum(data[str(year)][str(month)].duplicated(["latitude", "longitude"])))
+
+        del all_data
 
 if __name__ == "__main__":
     main()
