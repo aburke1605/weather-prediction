@@ -21,5 +21,9 @@ def main():
 
         del all_data
 
+    # simplify below for now
+    data = data["2010"]["1"]
+    Plot(data.latitude, data.longitude, data.rainfall)
+
 if __name__ == "__main__":
     main()

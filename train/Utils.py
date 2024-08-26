@@ -62,7 +62,11 @@ def Plot(latitude, longitude, variable, label=None, difference=False):
     x = r * longitude * np.cos(phi_0)
     y = r * latitude
 
+    # nbins = width / bin_width
+    nbins_x = int((max(x)-min(x))/abs(x[1]-x[0]))
+    nbins_y = int((max(y)-min(y))/abs(y[1]-y[0]))
+
     fig, ax = plt.subplots(figsize=(6,10))
-    _, _, _, im = ax.hist2d(x, y, weights=variable, bins=150, cmap="coolwarm" if difference else "Blues")
+    _, _, _, im = ax.hist2d(x, y, weights=variable, bins=(nbins_x, nbins_y), cmap="coolwarm" if difference else "Blues")
     fig.colorbar(im, label=label)
     plt.show()
